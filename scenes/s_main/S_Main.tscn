@@ -48,7 +48,7 @@ material/0 = ExtResource( 6 )
 shape = SubResource( 2 )
 
 [node name="Slope1" type="MeshInstance" parent="ArenaGeometry"]
-transform = Transform( 12, 0, 0, 0, 6.2579, -0.176777, 0, 6.2579, 0.176777, -13.502, 1.517, 0.041 )
+transform = Transform( 12, 0, 0, 0, 6.25789, -0.176777, 0, 6.2579, 0.176777, -13.502, 1.517, 0.041 )
 use_in_baked_light = true
 mesh = SubResource( 3 )
 material/0 = ExtResource( 7 )
@@ -180,7 +180,7 @@ material/0 = ExtResource( 7 )
 shape = SubResource( 2 )
 
 [node name="Wall1" type="MeshInstance" parent="ArenaGeometry"]
-transform = Transform( 1, 0, 0, 0, -1.74846e-06, -6, 0, 40, -2.62268e-07, -19.5439, 3.5, -0.0645461 )
+transform = Transform( 1, 0, 0, 0, -1.74846e-06, -6, 0, 40, -2.62268e-07, -19.5, 3.5, 0 )
 use_in_baked_light = true
 mesh = SubResource( 3 )
 material/0 = ExtResource( 7 )
@@ -245,11 +245,9 @@ shadow_enabled = true
 shadow_color = Color( 0.6, 0.6, 0.6, 1 )
 
 [node name="Player" parent="." instance=ExtResource( 3 )]
-transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, -9.5969, 3.76653, -4.70793 )
+transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, -11.0952, 3.76327, -4.40475 )
 head_path = NodePath("../Player/Head")
 cam_path = NodePath("../Player/Head/Camera")
-acceleration = 4
-deacceleration = 4
 
 [node name="Ladder" parent="." instance=ExtResource( 4 )]
 transform = Transform( -4.37114e-08, 0, 7, 0, 1.51, 0, -1, 0, -3.0598e-07, 13.25, 2, -5.25 )

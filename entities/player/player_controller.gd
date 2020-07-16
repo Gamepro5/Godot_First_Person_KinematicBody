@@ -25,13 +25,9 @@ export(int) var acceleration = 8
 export(int) var deacceleration = 10
 export(float, 0.0, 1.0, 0.05) var air_control = 0.3
 export(int) var jump_height = 10
-# Fly
-export(int) var fly_speed = 10
-export(int) var fly_accel = 4
-var flying := false
 # Slopes
 export(float) var floor_max_angle = 45.0
-
+var gravity_velocity := Vector3()
 ##################################################
 
 # Called when the node enters the scene tree
@@ -50,6 +46,7 @@ func _process(_delta: float) -> void:
 
 # Called every physics tick. 'delta' is constant
 func _physics_process(delta: float) -> void:
+	
 	# Input
 	direction = Vector3()
 	var aim: Basis = get_global_transform().basis
@@ -66,14 +63,18 @@ func _physics_process(delta: float) -> void:
 	
 	# Jump
 	var _snap: Vector3
+	#if (moving): #idk how to stop on slopes now
+		#gravity_velocity.y = 0
 	if is_on_floor():
+		gravity_velocity.y = -0.0001
 		_snap = Vector3(0, -1, 0)
 		if Input.is_action_just_pressed("move_jump"):
 			_snap = Vector3(0, 0, 0)
-			velocity.y = jump_height
-	
-	# Apply Gravity
-	velocity.y -= gravity * delta
+			gravity_velocity.y = jump_height
+	else:
+		# Apply Gravity
+		velocity.y = 0;
+		gravity_velocity.y -= gravity * delta
 	
 	# Sprint
 	var _speed: int
@@ -85,7 +86,7 @@ func _physics_process(delta: float) -> void:
 		_speed = walk_speed
 		cam.set_fov(lerp(cam.fov, FOV, delta * 8))
 		sprinting = false
-	"""
+	
 	# Acceleration and Deacceleration
 	# where would the player go
 	var _temp_vel: Vector3 = velocity
@@ -110,19 +111,27 @@ func _physics_process(delta: float) -> void:
 		if velocity.z < _vel_clamp and velocity.z > -_vel_clamp:
 			velocity.z = 0
 	"""
-	var _temp_vel: Vector3 = velocity
-	_temp_vel.y = 0
-	_temp_vel = direction * _speed
-	velocity.x = _temp_vel.x 
-	velocity.z = _temp_vel.z
+	var temp_vel = velocity;
+	temp_vel.y = 0
+	temp_vel = direction * _speed;
+	velocity.x = temp_vel.x;
+	velocity.z = temp_vel.z;
+	"""
+	
+	# new idea: have a ray pointing in the direction you are moving on your feet. if it finds somethign that is steeper than the 
+	
 	# Move
+	#move_and_slide(gravity_velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
 	if (is_on_floor()):
 		if  (is_on_wall()):
 			velocity = move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
 		else:
 			velocity.y = move_and_slide_with_snap(velocity, _snap, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle)).y
+		#velocity = move_and_slide_with_snap(velocity, _snap, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
 	else:
 		velocity = move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
+	move_and_slide(gravity_velocity, FLOOR_NORMAL, false, 4, deg2rad(floor_max_angle))	
+	print(velocity);
 	
 
 
