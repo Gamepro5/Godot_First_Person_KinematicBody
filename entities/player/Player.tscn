@@ -14,6 +14,7 @@ head_path = NodePath("Head")
 cam_path = NodePath("Head/Camera")
 
 [node name="Collision" type="CollisionShape" parent="."]
+transform = Transform( 0.6, 0, 0, 0, 1.3, 0, 0, 0, 0.6, 0, 0, 0 )
 shape = SubResource( 1 )
 
 [node name="Head" type="Spatial" parent="."]
