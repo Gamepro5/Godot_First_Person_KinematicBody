@@ -119,7 +119,7 @@ func _physics_process(delta: float) -> void:
 	_temp_vel = direction * _speed
 	"""
 	# Move
-	print(velocity)
+	#print(velocity)
 	if on_floor:
 		# set gravity to 0 or jump speed
 		curr_gravity = velocity.y
@@ -127,14 +127,18 @@ func _physics_process(delta: float) -> void:
 		_temp_vel = _temp_vel.slide(floor_normal)
 		# reapply gravity, so jumps go up rather than normal to the floor
 		_temp_vel.y += curr_gravity
+		var input_vec = direction * _speed
+		#floor_normal = get_floor_normal()
+		var projected_vec = Vector3(input_vec.x, 0, input_vec.z)
+		projected_vec.y = -(input_vec.x * floor_normal.x + input_vec.z * floor_normal.z) / floor_normal.y
 		if  (is_on_wall()):
 			wall_counter += 1
 			#print("wall: ", wall_counter)
 			#setting velocity to the remainder solves weird behavior on super steep slopes but fucks things up on perfect 90 degree walls when on a slope. idk how to have it both ways.
 			velocity = move_and_slide(_temp_vel, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
 		else:
-			move_and_slide(_temp_vel, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle), false)
-
+			move_and_slide(projected_vec, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle), false)
+		print(floor_normal)
 		# manually control this since we don't always have downward pressure above. could use a raycast
 		on_floor = false
 		floor_normal = null
