@@ -96,7 +96,14 @@ func _physics_process(delta: float) -> void:
 	# where would the player go
 	var _temp_vel: Vector3 = velocity
 	_temp_vel.y = 0
-	var _target: Vector3 = direction * _speed
+	var _target: Vector3
+	if (on_floor):
+		var input_vec = direction * _speed
+		var projected_vec = Vector3(input_vec.x, 0, input_vec.z)
+		projected_vec.y = -(input_vec.x * floor_normal.x + input_vec.z * floor_normal.z) / floor_normal.y
+		_target = projected_vec
+	else:
+		_target = direction * _speed
 	var _temp_accel: float
 	if direction.dot(_temp_vel) > 0:
 		_temp_accel = acceleration
@@ -108,6 +115,7 @@ func _physics_process(delta: float) -> void:
 	_temp_vel = _temp_vel.linear_interpolate(_target, _temp_accel * delta)
 	velocity.x = _temp_vel.x
 	velocity.z = _temp_vel.z
+	
 	# clamping (to stop on slopes)
 	if direction.dot(velocity) == 0:
 		var _vel_clamp := 0.25
@@ -119,7 +127,7 @@ func _physics_process(delta: float) -> void:
 	_temp_vel = direction * _speed
 	"""
 	# Move
-	#print(velocity)
+	print(on_floor)
 	if on_floor:
 		# set gravity to 0 or jump speed
 		curr_gravity = velocity.y
@@ -127,18 +135,13 @@ func _physics_process(delta: float) -> void:
 		_temp_vel = _temp_vel.slide(floor_normal)
 		# reapply gravity, so jumps go up rather than normal to the floor
 		_temp_vel.y += curr_gravity
-		var input_vec = direction * _speed
-		#floor_normal = get_floor_normal()
-		var projected_vec = Vector3(input_vec.x, 0, input_vec.z)
-		projected_vec.y = -(input_vec.x * floor_normal.x + input_vec.z * floor_normal.z) / floor_normal.y
 		if  (is_on_wall()):
 			wall_counter += 1
 			#print("wall: ", wall_counter)
 			#setting velocity to the remainder solves weird behavior on super steep slopes but fucks things up on perfect 90 degree walls when on a slope. idk how to have it both ways.
 			velocity = move_and_slide(_temp_vel, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
 		else:
-			move_and_slide(projected_vec, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle), false)
-		print(floor_normal)
+			move_and_slide(_temp_vel, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle), false)
 		# manually control this since we don't always have downward pressure above. could use a raycast
 		on_floor = false
 		floor_normal = null

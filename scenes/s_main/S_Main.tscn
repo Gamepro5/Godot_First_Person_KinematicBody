@@ -48,7 +48,7 @@ material/0 = ExtResource( 6 )
 shape = SubResource( 2 )
 
 [node name="Slope1" type="MeshInstance" parent="ArenaGeometry"]
-transform = Transform( 12, 0, 0, 0, 6.25789, -0.176777, 0, 6.2579, 0.176777, -13.5007, 1.517, 0.041 )
+transform = Transform( 12, 0, 0, 0, 3.73947, -0.226587, 0, 8.02115, 0.105635, -13.5, 1.517, 0.042 )
 use_in_baked_light = true
 mesh = SubResource( 3 )
 material/0 = ExtResource( 7 )
@@ -233,17 +233,6 @@ shape = SubResource( 6 )
 mesh = SubResource( 7 )
 material/0 = SubResource( 8 )
 
-[node name="StaticBody3" type="StaticBody" parent="ArenaGeometry"]
-transform = Transform( 5, 0, 0, 0, 3, 0, 0, 0, 5, 0.568846, -2.10326, -3.09091 )
-
-[node name="CollisionShape" type="CollisionShape" parent="ArenaGeometry/StaticBody3"]
-shape = SubResource( 6 )
-
-[node name="MeshInstance" type="MeshInstance" parent="ArenaGeometry/StaticBody3"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-mesh = SubResource( 7 )
-material/0 = SubResource( 8 )
-
 [node name="Lighting" type="Spatial" parent="."]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting"]
@@ -259,7 +248,7 @@ shadow_color = Color( 0.6, 0.6, 0.6, 1 )
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, -11.0952, 3.76327, -4.40475 )
 head_path = NodePath("../Player/Head")
 cam_path = NodePath("../Player/Head/Camera")
-acceleration = 10
+deacceleration = 4
 air_control = 0.0
 
 [node name="Ladder" parent="." instance=ExtResource( 4 )]
