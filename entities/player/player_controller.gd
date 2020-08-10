@@ -38,47 +38,46 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame
 func _process(_delta: float) -> void:
-	move_axis.x = Input.get_action_strength("move_forward") - Input.get_action_strength("move_backward")
-	move_axis.y = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+	#move_axis.x = Input.get_action_strength("move_forward") - Input.get_action_strength("move_backward")
+	#move_axis.y = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
 	
 	camera_rotation()
 
 #TODO: stop deceleration when on a wall, fix not going up and down slopes at the same speed, also see comment on line 133.
-var wall_counter = 0
-var air_counter = 0
-var floor_counter = 0
-var curr_gravity = 0
-var _temp_vel
+var curr_gravity = Vector3()
 var on_floor = false
 var floor_normal = Vector3()
 # Called every physics tick. 'delta' is constant
 func _physics_process(delta: float) -> void:
 	# Input
 	direction = Vector3()
-	var aim: Basis = get_global_transform().basis
-	if move_axis.x >= 0.5:
-		direction -= aim.z
-	if move_axis.x <= -0.5:
-		direction += aim.z
-	if move_axis.y <= -0.5:
-		direction -= aim.x
-	if move_axis.y >= 0.5:
-		direction += aim.x
-	direction.y = 0
+	var basis: Basis = get_global_transform().basis
+	if Input.get_action_strength("move_forward"):
+		direction -= basis.z
+	if Input.get_action_strength("move_backward"):
+		direction += basis.z
+	if Input.get_action_strength("move_left"):
+		direction -= basis.x
+	if Input.get_action_strength("move_right"):
+		direction += basis.x
+	#direction.y = 0
 	direction = direction.normalized()
 
 	# Jump
 	var _snap: Vector3
+	var jump: bool
+	jump = false
 	if on_floor:
-		_snap = Vector3(0, -0.1, 0)
-		velocity.y = 0
-		#curr_gravity = 0
+		_snap = Vector3(0, -1, 0)
+		#velocity.y = 0
+		curr_gravity.y = 0
+		jump = false
 		if Input.is_action_just_pressed("move_jump"):
 			_snap = Vector3(0, 0, 0)
-			velocity.y = jump_height
-	
-	# Apply Gravity
-	curr_gravity -= gravity * delta
+			jump = true
+	else:
+		# Apply Gravity
+		curr_gravity.y -= gravity * delta
 
 	# Sprint
 	var _speed: int
@@ -91,38 +90,38 @@ func _physics_process(delta: float) -> void:
 		cam.set_fov(lerp(cam.fov, FOV, delta * 8))
 		sprinting = false
 	
-	
 	# Acceleration and Deacceleration
 	# where would the player go
-	var _temp_vel: Vector3 = velocity
-	_temp_vel.y = 0
 	var _target: Vector3
 	if (on_floor):
 		
 		# set gravity to 0 or jump speed
-		curr_gravity = velocity.y
+		if jump:
+			curr_gravity.y = 10
 		# slide input vector surface normal
-		_temp_vel = _temp_vel.slide(floor_normal)
+		velocity = velocity.slide(floor_normal)
 		# reapply gravity, so jumps go up rather than normal to the floor
-		_temp_vel.y += curr_gravity
+		velocity.y += curr_gravity.y
 		var input_vec = direction * _speed
-		#floor_normal = get_floor_normal()
-		var projected_vec = Vector3(input_vec.x, 0, input_vec.z)
+		var projected_vec = direction * _speed #Vector3(input_vec.x, 0, input_vec.z)
 		projected_vec.y = -(input_vec.x * floor_normal.x + input_vec.z * floor_normal.z) / floor_normal.y
 		_target = projected_vec
 	else:
 		_target = direction * _speed
 	var _temp_accel: float
-	if direction.dot(_temp_vel) > 0:
+	if direction.dot(velocity) > 0:
 		_temp_accel = acceleration
 	else:
 		_temp_accel = deacceleration
 	if not on_floor:
 		_temp_accel *= air_control
+		
 	# interpolation
-	_temp_vel = _temp_vel.linear_interpolate(_target, _temp_accel * delta)
-	velocity.x = _temp_vel.x
-	velocity.z = _temp_vel.z
+	
+	velocity = velocity.linear_interpolate(_target, _temp_accel * delta)
+	print(_target, velocity)
+	
+	#velocity = _target
 	
 	# clamping (to stop on slopes)
 	if direction.dot(velocity) == 0:
@@ -131,23 +130,20 @@ func _physics_process(delta: float) -> void:
 			velocity.x = 0
 		if velocity.z < _vel_clamp and velocity.z > -_vel_clamp:
 			velocity.z = 0
-	"""
-	_temp_vel = direction * _speed
-	"""
+	
+	
 	# Move
-	print(on_floor)
+	#print(on_floor)
 	if on_floor:
 		if  (is_on_wall()):
-			wall_counter += 1
-			#print("wall: ", wall_counter)
 			#setting velocity to the remainder solves weird behavior on super steep slopes but fucks things up on perfect 90 degree walls when on a slope. idk how to have it both ways.
-			velocity = move_and_slide(_temp_vel, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
+			move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
 		else:
-			move_and_slide(_temp_vel, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle), false)
+			move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle), false)
 		# manually control this since we don't always have downward pressure above. could use a raycast
 		on_floor = false
 		floor_normal = null
-
+		
 		# snap if vector exists
 		if _snap != Vector3():
 			# collision check
@@ -163,16 +159,14 @@ func _physics_process(delta: float) -> void:
 					on_floor = true
 					floor_normal = col.normal
 
-			# print(col.normal.dot(FLOOR_NORMAL) < deg2rad(floor_max_angle),  col.travel.project(FLOOR_NORMAL))
+			
 	else:
-		air_counter += 1
-		#print("air:  ", air_counter, " ", on_floor)
-		_temp_vel.y = velocity.y
-		_temp_vel.y += curr_gravity
+		velocity.y = curr_gravity.y
+		#velocity.y += curr_gravity.y
 		if (is_on_ceiling()):
-			curr_gravity = 0;
+			curr_gravity.y = 0;
 			velocity.y = 0;
-		move_and_slide(_temp_vel, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
+		move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
 		on_floor = is_on_floor()
 		floor_normal = get_floor_normal()
 

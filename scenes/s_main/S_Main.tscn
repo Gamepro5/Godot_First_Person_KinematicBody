@@ -245,10 +245,11 @@ shadow_enabled = true
 shadow_color = Color( 0.6, 0.6, 0.6, 1 )
 
 [node name="Player" parent="." instance=ExtResource( 3 )]
-transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, -11.0952, 3.76327, -4.40475 )
+transform = Transform( -0.816218, 0, -0.577744, 0, 1, 0, 0.577744, 0, -0.816218, -13.4319, 3.76327, -4.40475 )
 head_path = NodePath("../Player/Head")
 cam_path = NodePath("../Player/Head/Camera")
-deacceleration = 4
+acceleration = 12
+deacceleration = 12
 air_control = 0.0
 
 [node name="Ladder" parent="." instance=ExtResource( 4 )]
