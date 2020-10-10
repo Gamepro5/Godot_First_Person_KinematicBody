@@ -63,9 +63,10 @@ func _physics_process(delta: float) -> void:
 	#direction.y = 0
 	direction = direction.normalized()
 
-	# Jump
+		# Jump
 	var _snap: Vector3
 	var jump: bool
+	jump = false
 	jump = false
 	if on_floor:
 		_snap = Vector3(0, -1, 0)
@@ -76,9 +77,9 @@ func _physics_process(delta: float) -> void:
 			_snap = Vector3(0, 0, 0)
 			jump = true
 	else:
-		# Apply Gravity
-		curr_gravity.y -= gravity * delta
-
+	# Apply Gravity
+			curr_gravity.y -= gravity * delta
+	
 	# Sprint
 	var _speed: int
 	if (Input.is_action_pressed("move_sprint") and can_sprint and move_axis.x >= 0.5):
@@ -101,13 +102,16 @@ func _physics_process(delta: float) -> void:
 		# slide input vector surface normal
 		velocity = velocity.slide(floor_normal)
 		# reapply gravity, so jumps go up rather than normal to the floor
-		velocity.y += curr_gravity.y
+		#velocity.y += curr_gravity.y
 		var input_vec = direction * _speed
 		var projected_vec = direction * _speed #Vector3(input_vec.x, 0, input_vec.z)
 		projected_vec.y = -(input_vec.x * floor_normal.x + input_vec.z * floor_normal.z) / floor_normal.y
 		_target = projected_vec
 	else:
 		_target = direction * _speed
+	
+
+	"""
 	var _temp_accel: float
 	if direction.dot(velocity) > 0:
 		_temp_accel = acceleration
@@ -115,21 +119,29 @@ func _physics_process(delta: float) -> void:
 		_temp_accel = deacceleration
 	if not on_floor:
 		_temp_accel *= air_control
+	"""
 		
 	# interpolation
 	
-	velocity = velocity.linear_interpolate(_target, _temp_accel * delta)
-	print(_target, velocity)
+	velocity = velocity.linear_interpolate(_target, acceleration * delta)
+	#velocity.x =  lerp(velocity.x, _target.x, acceleration * delta)
+	#velocity.z =  lerp(velocity.z, _target.z, acceleration * delta)
+	#velocity.y =  lerp(velocity.y, _target.y, acceleration * delta)
 	
+	print(floor_normal)
+	#print(_target, velocity)
+	#velocity.y += curr_gravity.y
 	#velocity = _target
 	
 	# clamping (to stop on slopes)
+	"""
 	if direction.dot(velocity) == 0:
 		var _vel_clamp := 0.25
 		if velocity.x < _vel_clamp and velocity.x > -_vel_clamp:
 			velocity.x = 0
 		if velocity.z < _vel_clamp and velocity.z > -_vel_clamp:
 			velocity.z = 0
+	"""
 	
 	
 	# Move
@@ -138,13 +150,16 @@ func _physics_process(delta: float) -> void:
 		if  (is_on_wall()):
 			#setting velocity to the remainder solves weird behavior on super steep slopes but fucks things up on perfect 90 degree walls when on a slope. idk how to have it both ways.
 			move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
+			#print("floor and wall")
 		else:
 			move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle), false)
 		# manually control this since we don't always have downward pressure above. could use a raycast
+			#print(velocity)
 		on_floor = false
 		floor_normal = null
 		
 		# snap if vector exists
+		
 		if _snap != Vector3():
 			# collision check
 			var col = move_and_collide(_snap, false, false, true)
@@ -158,6 +173,7 @@ func _physics_process(delta: float) -> void:
 					# we're now on the floor
 					on_floor = true
 					floor_normal = col.normal
+		
 
 			
 	else:
@@ -169,7 +185,7 @@ func _physics_process(delta: float) -> void:
 		move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
 		on_floor = is_on_floor()
 		floor_normal = get_floor_normal()
-
+		#print("not floor")
 
 
 # Called when there is an input event
