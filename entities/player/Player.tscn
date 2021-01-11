@@ -2,7 +2,7 @@
 
 [ext_resource path="res://entities/player/player_controller.gd" type="Script" id=1]
 
-[sub_resource type="CapsuleShape" id=1]
+[sub_resource type="CylinderShape" id=1]
 
 [node name="Player" type="KinematicBody" groups=[
 "Player",
@@ -17,7 +17,7 @@ deacceleration = 4
 air_control = 1.0
 
 [node name="Collision" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0, 0 )
+transform = Transform( 0.4, 0, 0, 0, 1, 0, 0, 0, 0.4, 0, 0, 0 )
 shape = SubResource( 1 )
 
 [node name="Head" type="Spatial" parent="."]
@@ -28,3 +28,7 @@ keep_aspect = 0
 current = true
 fov = 80.0
 far = 250.0
+
+[node name="vel_raycast" type="RayCast" parent="."]
+enabled = true
+cast_to = Vector3( 0, 0, 0 )

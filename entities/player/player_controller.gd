@@ -38,9 +38,6 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame
 func _process(_delta: float) -> void:
-	#move_axis.x = Input.get_action_strength("move_forward") - Input.get_action_strength("move_backward")
-	#move_axis.y = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
-	
 	camera_rotation()
 
 #TODO: stop deceleration when on a wall, fix not going up and down slopes at the same speed, also see comment on line 133.
@@ -111,38 +108,14 @@ func _physics_process(delta: float) -> void:
 		_target = direction * _speed
 	
 
-	"""
-	var _temp_accel: float
-	if direction.dot(velocity) > 0:
-		_temp_accel = acceleration
-	else:
-		_temp_accel = deacceleration
-	if not on_floor:
-		_temp_accel *= air_control
-	"""
 		
 	# interpolation
 	
 	velocity = velocity.linear_interpolate(_target, acceleration * delta)
-	#velocity.x =  lerp(velocity.x, _target.x, acceleration * delta)
-	#velocity.z =  lerp(velocity.z, _target.z, acceleration * delta)
-	#velocity.y =  lerp(velocity.y, _target.y, acceleration * delta)
-	
-	print(floor_normal)
-	#print(_target, velocity)
-	#velocity.y += curr_gravity.y
-	#velocity = _target
-	
-	# clamping (to stop on slopes)
-	"""
-	if direction.dot(velocity) == 0:
-		var _vel_clamp := 0.25
-		if velocity.x < _vel_clamp and velocity.x > -_vel_clamp:
-			velocity.x = 0
-		if velocity.z < _vel_clamp and velocity.z > -_vel_clamp:
-			velocity.z = 0
-	"""
-	
+	#$vel_raycast.cast_to = $vel_raycast.to_local(self.to_global(velocity))
+	#$vel_raycast.cast_to = $vel_raycast.to_global(velocity)
+	get_parent().get_node("playervel").translation = translation
+	get_parent().get_node("playervel").cast_to = velocity
 	
 	# Move
 	#print(on_floor)
