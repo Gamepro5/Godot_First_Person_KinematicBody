@@ -1,9 +1,8 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://scenes/s_main/default_env.tres" type="Environment" id=1]
 [ext_resource path="res://scenes/s_main/s_main.gd" type="Script" id=2]
 [ext_resource path="res://entities/player/Player.tscn" type="PackedScene" id=3]
-[ext_resource path="res://scenes/assets/ladder/Ladder.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/assets/fps_counter/FPS_Counter.tscn" type="PackedScene" id=5]
 [ext_resource path="res://scenes/s_main/materials/dark.material" type="Material" id=6]
 [ext_resource path="res://scenes/s_main/materials/blue.material" type="Material" id=7]
@@ -48,7 +47,7 @@ material/0 = ExtResource( 6 )
 shape = SubResource( 2 )
 
 [node name="Slope1" type="MeshInstance" parent="ArenaGeometry"]
-transform = Transform( 12, 0, 0, 0, 6.25789, -0.176777, 0, 6.25789, 0.176777, -13.5, 1.517, 0.042 )
+transform = Transform( 12, 0, 0, 0, 3.74017, -0.226577, 0, 8.02082, 0.105655, -13.5, 1.517, 0.042 )
 use_in_baked_light = true
 mesh = SubResource( 3 )
 material/0 = ExtResource( 7 )
@@ -126,7 +125,7 @@ transform = Transform( 1, 0, 0, 0, 1, 2.22045e-16, 0, -9.53674e-07, 1, 0, -0.500
 shape = SubResource( 4 )
 
 [node name="Slope2" type="MeshInstance" parent="ArenaGeometry"]
-transform = Transform( 8.31735, 2.69603, 0.163323, 0, 8.02082, -0.105655, -8.64995, 2.59236, 0.157043, 5.15391, 1.517, 5.28803 )
+transform = Transform( 8.31735, 1.17458, 0.177126, 0, 8.69869, -0.0460307, -8.64995, 1.12942, 0.170315, 5.15391, 1.517, 5.28803 )
 use_in_baked_light = true
 mesh = SubResource( 3 )
 material/0 = ExtResource( 7 )
@@ -245,13 +244,10 @@ shadow_enabled = true
 shadow_color = Color( 0.6, 0.6, 0.6, 1 )
 
 [node name="Player" parent="." instance=ExtResource( 3 )]
-transform = Transform( -0.816218, 0, -0.577744, 0, 1, 0, 0.577744, 0, -0.816218, -13.4319, 2.47773, -4.40475 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4319, 2.47773, -4.40475 )
 head_path = NodePath("../Player/Head")
 cam_path = NodePath("../Player/Head/Camera")
 floor_max_angle = 80.0
-
-[node name="Ladder" parent="." instance=ExtResource( 4 )]
-transform = Transform( -4.37114e-08, 0, 7, 0, 1.51, 0, -1, 0, -3.0598e-07, 13.25, 2, -5.25 )
 
 [node name="FPS_Counter" parent="." instance=ExtResource( 5 )]
 

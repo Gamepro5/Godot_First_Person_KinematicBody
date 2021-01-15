@@ -26,7 +26,7 @@ export(int) var deacceleration = 10
 export(float, 0.0, 1.0, 0.05) var air_control = 0.3
 export(int) var jump_height = 5
 # Slopes
-export(float) var floor_max_angle = 45.0
+export(float) var floor_max_angle = 89.0
 
 ##################################################
 
@@ -101,7 +101,7 @@ func _physics_process(delta: float) -> void:
 		# reapply gravity, so jumps go up rather than normal to the floor
 		#velocity.y += curr_gravity.y
 		var input_vec = direction * _speed
-		var projected_vec = direction * _speed #Vector3(input_vec.x, 0, input_vec.z)
+		var projected_vec = direction * _speed
 		projected_vec.y = -(input_vec.x * floor_normal.x + input_vec.z * floor_normal.z) / floor_normal.y
 		_target = projected_vec
 	else:
@@ -111,18 +111,23 @@ func _physics_process(delta: float) -> void:
 		
 	# interpolation
 	
-	velocity = velocity.linear_interpolate(_target, acceleration * delta)
+	velocity = _target#velocity.linear_interpolate(_target, acceleration * delta)
 	#$vel_raycast.cast_to = $vel_raycast.to_local(self.to_global(velocity))
-	#$vel_raycast.cast_to = $vel_raycast.to_global(velocity)
-	get_parent().get_node("playervel").translation = translation
-	get_parent().get_node("playervel").cast_to = velocity
+	#print( $vel_raycast.to_global($vel_raycast.rotation) , $vel_raycast.rotation )
+	print(velocity.length())
+	$vel_raycast.cast_to = velocity.rotated(Vector3.UP, -rotation.y) #Vector3(0,0,-1)#velocity#$vel_raycast.to_local(velocity)
+	#print(velocity)
+	#get_parent().get_node("playervel").translation = translation
+	#get_parent().get_node("playervel").cast_to = velocity
 	
 	# Move
 	#print(on_floor)
 	if on_floor:
 		if  (is_on_wall()):
 			#setting velocity to the remainder solves weird behavior on super steep slopes but fucks things up on perfect 90 degree walls when on a slope. idk how to have it both ways.
-			move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
+			var temp = move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
+			velocity.x = temp.x
+			velocity.z = temp.z
 			#print("floor and wall")
 		else:
 			move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle), false)
