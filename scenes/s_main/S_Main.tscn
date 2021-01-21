@@ -59,6 +59,45 @@ transform = Transform( 1, 0, 0, 0, 1, 9.31323e-10, 0, -9.53674e-07, 1, 0, 0, 0 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, -9.53674e-07, 1, 0, 0, 0 )
 shape = SubResource( 2 )
 
+[node name="Slope7" type="MeshInstance" parent="ArenaGeometry"]
+transform = Transform( 2.35907, 6.70966, 0.155434, 0.591157, 5.53718, -0.194633, -11.751, 1.62556, 0.0214128, -9.73609, 2.45173, 2.27988 )
+use_in_baked_light = true
+mesh = SubResource( 3 )
+material/0 = ExtResource( 7 )
+
+[node name="StaticBody" type="StaticBody" parent="ArenaGeometry/Slope7"]
+transform = Transform( 1, 0, 0, 0, 1, 9.31323e-10, 0, -9.53674e-07, 1, 0, 0, 0 )
+
+[node name="CollisionShape" type="CollisionShape" parent="ArenaGeometry/Slope7/StaticBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, -9.53674e-07, 1, 0, 0, 0 )
+shape = SubResource( 2 )
+
+[node name="Slope8" type="MeshInstance" parent="ArenaGeometry"]
+transform = Transform( 12, 0, 0, 0, 6.25789, -0.176777, 0, 6.25789, 0.176777, -0.375346, 2.45173, 13.9033 )
+use_in_baked_light = true
+mesh = SubResource( 3 )
+material/0 = ExtResource( 7 )
+
+[node name="StaticBody" type="StaticBody" parent="ArenaGeometry/Slope8"]
+transform = Transform( 1, 0, 0, 0, 1, 9.31323e-10, 0, -9.53674e-07, 1, 0, 0, 0 )
+
+[node name="CollisionShape" type="CollisionShape" parent="ArenaGeometry/Slope8/StaticBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, -9.53674e-07, 1, 0, 0, 0 )
+shape = SubResource( 2 )
+
+[node name="Slope9" type="MeshInstance" parent="ArenaGeometry"]
+transform = Transform( -1.95505e-06, 11.0648, 0.176777, 0, 11.0648, -0.176777, -12, -1.80269e-06, -2.88006e-08, 5.6888, 5.5551, 13.9033 )
+use_in_baked_light = true
+mesh = SubResource( 3 )
+material/0 = ExtResource( 7 )
+
+[node name="StaticBody" type="StaticBody" parent="ArenaGeometry/Slope9"]
+transform = Transform( 1, 0, 0, 0, 1, 9.31323e-10, 0, -9.53674e-07, 1, 0, 0, 0 )
+
+[node name="CollisionShape" type="CollisionShape" parent="ArenaGeometry/Slope9/StaticBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, -9.53674e-07, 1, 0, 0, 0 )
+shape = SubResource( 2 )
+
 [node name="Little Rock" type="MeshInstance" parent="ArenaGeometry"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.35582, 0.0663657, 3.65426 )
 use_in_baked_light = true
@@ -125,7 +164,7 @@ transform = Transform( 1, 0, 0, 0, 1, 2.22045e-16, 0, -9.53674e-07, 1, 0, -0.500
 shape = SubResource( 4 )
 
 [node name="Slope2" type="MeshInstance" parent="ArenaGeometry"]
-transform = Transform( 8.31735, 1.17458, 0.177126, 0, 8.69869, -0.0460307, -8.64995, 1.12942, 0.170315, 5.15391, 1.517, 5.28803 )
+transform = Transform( 5.43482, 2.30216, 0.213191, 5.70426e-07, 8.46492, -0.0729425, -10.6987, 1.16947, 0.108298, 9.73359, 1.517, 5.28803 )
 use_in_baked_light = true
 mesh = SubResource( 3 )
 material/0 = ExtResource( 7 )
@@ -223,7 +262,7 @@ material/0 = ExtResource( 7 )
 shape = SubResource( 5 )
 
 [node name="StaticBody2" type="StaticBody" parent="ArenaGeometry"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8773, 1.80588, -8.16947 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8773, -0.00854886, -8.16947 )
 
 [node name="CollisionShape" type="CollisionShape" parent="ArenaGeometry/StaticBody2"]
 shape = SubResource( 6 )
@@ -245,15 +284,8 @@ shadow_color = Color( 0.6, 0.6, 0.6, 1 )
 
 [node name="Player" parent="." instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4319, 2.47773, -4.40475 )
-head_path = NodePath("../Player/Head")
-cam_path = NodePath("../Player/Head/Camera")
-floor_max_angle = 80.0
 
 [node name="FPS_Counter" parent="." instance=ExtResource( 5 )]
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( -1.62921e-07, 0, 1, 0, 1, 0, -1, 0, -1.62921e-07, 0.473866, 3.52792, -3.17319 )
-
-[node name="playervel" type="RayCast" parent="."]
-enabled = true
-cast_to = Vector3( 0, 0, 0 )
+transform = Transform( 0.978803, 0, 0.204804, 0, 1, 0, -0.204804, 0, 0.978803, 8.35844, 0.980787, 14.9445 )
