@@ -2,7 +2,8 @@
 
 [ext_resource path="res://entities/player/player_controller.gd" type="Script" id=1]
 
-[sub_resource type="CapsuleShape" id=1]
+[sub_resource type="BoxShape" id=1]
+margin = 0.001
 
 [node name="Player" type="KinematicBody" groups=[
 "Player",
@@ -20,6 +21,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
 
 [node name="Camera" type="Camera" parent="Head"]
 keep_aspect = 0
+cull_mask = 2148532223
 current = true
 fov = 80.0
 far = 250.0

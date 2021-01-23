@@ -17,13 +17,13 @@ var sprinting := false
 # Walk
 const FLOOR_NORMAL := Vector3(0, 1, 0)
 var gravity = 30.0
-var walk_speed = 10
-var acceleration = 2 #default = 4
-var deacceleration = 2 #default = 4
+var walk_speed = 5
+var acceleration = 4 #default = 4
+var deacceleration = 4 #default = 4
 var air_control = 0 #default = 0.3
 var jump_height = 5
 # Slopes
-var floor_max_angle = 45.0
+var floor_max_angle = 80.0
 var current_floor_angle = 0.0;
 
 ##################################################
@@ -100,17 +100,20 @@ func _physics_process(delta: float) -> void:
 		var projected_vec = direction * walk_speed
 		projected_vec.y = -(input_vec.x * floor_normal.x + input_vec.z * floor_normal.z) / floor_normal.y
 		_target = projected_vec
+		
 	else:
 		_target = direction * walk_speed
 	
 
 		
 	# interpolation
-	velocity = velocity.linear_interpolate(_target, acceleration * delta)
+	#velocity = velocity.linear_interpolate(_target, acceleration * delta)
+	velocity = _target
 	
-	#To keep the visual velocity vector pointing where you would expect it to.
 	$vel_raycast.cast_to = velocity.rotated(Vector3.UP, -rotation.y)
-	
+	#print(Vector3(velocity.x, 0, velocity.z).length())
+	#print(col.get_normal())
+	 
 	# Move
 	if on_floor:
 		if  (is_on_wall()):
@@ -118,8 +121,14 @@ func _physics_process(delta: float) -> void:
 			var temp = move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
 			velocity.x = temp.x
 			velocity.z = temp.z
+			
 		else:
-			move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle), false)
+			#move_and_slide_with_snap(velocity, Vector3.DOWN, Vector3.UP)
+			move_and_slide(velocity)
+			#var col = move_and_collide(velocity*delta,true, true, false)
+			#if (col):
+				#print(col.get_normal())
+			#move_and_slide(velocity, FLOOR_NORMAL, true, 100, deg2rad(floor_max_angle), false)
 		# manually control this since we don't always have downward pressure above. could use a raycast
 		on_floor = false
 		floor_normal = null
@@ -130,9 +139,10 @@ func _physics_process(delta: float) -> void:
 			var col = move_and_collide(_snap, false, false, true)
 			# if no collision, we're not on the floor
 			if col:
+				print(col.get_normal())
 				current_floor_angle = rad2deg(acos(col.get_normal().dot(Vector3.UP)))
 				if acos(col.normal.dot(FLOOR_NORMAL)) < deg2rad(floor_max_angle) + 0.01:
-					var travel = col.travel.project(FLOOR_NORMAL)
+					var travel = col.travel.project(col.normal)#FLOOR_NORMAL)
 					# move object if it's super far away, otherwise just chill
 					if abs(travel.length()) > 0.1:
 						global_transform.origin += travel
@@ -143,13 +153,13 @@ func _physics_process(delta: float) -> void:
 
 			
 	else:
-		velocity.y = curr_gravity.y
 		if (is_on_ceiling()):
 			curr_gravity.y = 0;
-			velocity.y = 0;
+		velocity.y = curr_gravity.y
 		velocity = move_and_slide(velocity, FLOOR_NORMAL, true, 4, deg2rad(floor_max_angle))
 		on_floor = is_on_floor()
 		floor_normal = get_floor_normal()
+		
 
 
 # Called when there is an input event
